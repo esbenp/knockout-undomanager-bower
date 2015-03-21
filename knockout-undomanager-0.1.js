@@ -1,20 +1,23 @@
 // Knockout UndoManager v0.1 | (c) 2014 Stefano Bagnara
 // License: MIT (http://www.opensource.org/licenses/mit-license) 
 // requires "ko.watch" method from knockout.reactor-1.2.0-beta.js
-(function (factory) {
-	// Module systems magic dance.
-
-	if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
-		// CommonJS or Node: hard-coded dependency on "knockout"
-		factory(require("knockout"), exports);
-	} else if (typeof define === "function" && define["amd"]) {
-		// AMD anonymous module with hard-coded dependency on "knockout"
-		define(["knockout", "exports"], factory);
-	} else {
-		// <script> tag: use the global `ko` object
-		factory(ko, ko);
-	}
-}(function (ko, exports) { 
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['knockout', 'knockout-reactor'], function (ko, koWithReactor) {
+            return (root.ko = factory(koWithReactor));
+        });
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like enviroments that support module.exports,
+        // like Node.
+        module.exports = factory(require('knockout', 'knockout-reactor'));
+    } else {
+        // Browser globals
+        root.ko = factory(root.ko, root.ko);
+    }
+    // originalKo = knockout before knockout-reactor was added
+}(this, function (originalKo, ko) {
 	
   /// <summary>
   ///     Track last "levels" changes within the chained observable down to any given level and
@@ -25,7 +28,7 @@
   ///     { undoLabel: "Undo it (#COUNT)!" } -> Define a label for the undo command. "#COUNT#" sequence will be replaced with the stack length.<br/>
   ///     { redoLabel: "Redo it (#COUNT)!" } -> Define a label for the redo command. "#COUNT#" sequence will be replaced with the stack length.<br/>
   /// </param>
-  exports.undoManager = function (model, options) {
+  var undoManager = function (model, options) {
   	var undoStack = ko.observableArray();
   	var redoStack = ko.observableArray();
     var lastPushedStack;
@@ -216,5 +219,7 @@
       setMode: function(newMode) { mode = newMode; _removeMergedAction(undoStack); }
 		};
   };
+
+  return undoManager;
   
 }));
