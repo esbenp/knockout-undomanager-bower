@@ -12,7 +12,7 @@
         module.exports = factory(require('knockout', 'knockout-reactor'));
     } else {
         // Browser globals
-        root.ko = factory(root.ko, root.ko);
+        root.knockoutUndoManager = factory(root.ko, root.ko);
     }
     // originalKo = knockout before knockout-reactor was added
 }(this, function (originalKo, ko) {
