@@ -260,6 +260,16 @@
 
       if (mode == MODE_IGNORE) return;
 
+      // If this is not set all computed observables of a 
+      // viewmodel will be overridden when their dependencies 
+      // are undone. This is for now not the wanted behavior as
+      // this means all computed observables must implement a 
+      // write method. Not sure of the drawbacks of this right now
+      // but it is a temporary fix.
+      if (ko.isComputed(child)) {
+        return;
+      }
+
       var act;
 
       if (mode == MODE_MERGE) {
